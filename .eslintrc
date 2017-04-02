@@ -1,0 +1,41 @@
+{
+  "env": {
+      "es6": true
+  },
+  "extends": "airbnb",
+  "rules": {
+      "no-use-before-define": ["error", { "functions": false, "classes": false }],
+      "no-param-reassign": ["error", { "props": false }],
+      "func-names": ["error", "never"],
+      "space-before-function-paren": ["error", {
+        "named": "never",
+        "anonymous": "never"
+      }],
+      "arrow-parens": ["error", "as-needed"],
+      "no-plusplus": ["error", {"allowForLoopAfterthoughts": true}],
+      "consistent-return": 0,
+      "comma-dangle": ["error", "never"],
+      "arrow-body-style": ["error", "always"],
+      "no-unused-expressions": 0,
+      "no-tabs": 0,
+      "indent": 0,
+      "no-underscore-dangle": 0,
+      "newline-per-chained-call": 0
+  },
+  "globals": {
+      "angular": true,
+      "ionic": true,
+      "store": true,
+      "moment": true,
+      "window": true,
+      "PushNotification": true,
+      "analytics": true,
+      "io": true,
+      "document": true,
+      "AppRate": true,
+      "AdMob": true,
+      "facebookConnectPlugin": true,
+      "StatusBar": true,
+      "cordova": true
+  }
+}

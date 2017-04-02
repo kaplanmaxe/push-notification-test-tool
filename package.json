@@ -1,0 +1,46 @@
+{
+  "name": "push-notification-test-tool",
+  "version": "1.0.0",
+  "description": "CLI tool to send push notifications for Android/iOS",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kaplanmaxe/push-notification-test-tool.git"
+  },
+  "keywords": [
+    "push",
+    "notification",
+    "android",
+    "ios",
+    "test",
+    "tool",
+    "cli"
+  ],
+  "bin": {
+    "pushtester": "./dist/index.js"
+  },
+  "author": "Max Kaplan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaplanmaxe/push-notification-test-tool/issues"
+  },
+  "homepage": "https://github.com/kaplanmaxe/push-notification-test-tool#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.3",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  },
+  "dependencies": {
+    "apn": "^2.1.4",
+    "commander": "^2.9.0",
+    "node-gcm": "^0.14.5"
+  }
+}
