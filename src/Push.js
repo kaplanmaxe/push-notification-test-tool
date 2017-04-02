@@ -10,7 +10,7 @@ export default class Push {
    * @param {string} message
    * @param {string|array} tokens
    */
-  static ios(config, message, tokens) {
+  static ios(config, body, tokens) {
     const apnProvider = new Provider({
       token: {
         key: config.iosCert,
@@ -20,14 +20,16 @@ export default class Push {
       production: config.iosEnv.toLowerCase() === 'production'
     });
     const note = new Notification({
-      body: message,
-      title: 'New Interaction',
+      body: body.message,
+      title: body.title,
       topic: config.bundle
     });
 
     apnProvider.send(note, tokens)
     .then(() => {
       apnProvider.shutdown();
+      console.log('iOS Push Notification sent!');
+      process.exit(1);
     }, err => {
       console.log(err);
     });
@@ -38,10 +40,6 @@ export default class Push {
     const registrationTokens = typeof tokens === 'object' ? tokens : [tokens];
     const sender = new Sender(config.androidSenderAPIKey);
 
-    console.log(config.bundle);
-    console.log(body.title);
-    console.log(body.message);
-    console.log(registrationTokens);
     const notification = new Message({
       restrictedPackageName: config.bundle,
       notification: {

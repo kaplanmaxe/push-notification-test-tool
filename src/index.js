@@ -9,7 +9,6 @@ program
 program
   .command('setup')
   .description('set up enviromentals to send push notifications')
-  .option('--androidSenderId [senderId]', 'Android Sender ID')
   .option('--androidSenderAPIKey [apiKey]', 'Android API Key')
   .option('--iosCert <path>', 'iOS .p8 cert')
   .option('--iosTeamId [teamId]', 'iOS Team ID')
@@ -18,7 +17,6 @@ program
   .option('--bundle [bundleId]', 'Bundle ID')
   .action(options => {
     fs.writeFile('./config.json', JSON.stringify({
-      androidSenderId: options.androidSenderId || '',
       androidSenderAPIKey: options.androidSenderAPIKey || '',
       iosCert: options.iosCert || '',
       iosTeamId: options.iosTeamId || '',
@@ -37,10 +35,22 @@ program
     .option('-m, --message [message]', 'Push Notification Message')
     .option('-d, --devices [devices]', 'String or array of PN tokens for devices')
     .action((os, options) => {
-      if (!['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`)
-      const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+      if (!['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
+      let config = {};
+      if (fs.existsSync('./config.json')) {
+        config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+      } else {
+        throw new Error('You must run "pushtester setup" first');
+      }
+
+      if (!options.title || !options.message || !options.devices) {
+        throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
+      }
       if (os.toLowerCase() === 'ios') {
-        console.log('sending ios notification');
+        Push.ios(config, {
+          title: options.title,
+          message: options.message
+        }, options.devices);
       } else if (os.toLowerCase() === 'android') {
         Push.android(config, {
           title: options.title,

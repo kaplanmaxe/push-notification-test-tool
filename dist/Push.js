@@ -30,7 +30,7 @@ var Push = function () {
      * @param {string} message
      * @param {string|array} tokens
      */
-    value: function ios(config, message, tokens) {
+    value: function ios(config, body, tokens) {
       var apnProvider = new _apn.Provider({
         token: {
           key: config.iosCert,
@@ -40,13 +40,15 @@ var Push = function () {
         production: config.iosEnv.toLowerCase() === 'production'
       });
       var note = new _apn.Notification({
-        body: message,
-        title: 'New Interaction',
+        body: body.message,
+        title: body.title,
         topic: config.bundle
       });
 
       apnProvider.send(note, tokens).then(function () {
         apnProvider.shutdown();
+        console.log('iOS Push Notification sent!');
+        process.exit(1);
       }, function (err) {
         console.log(err);
       });
@@ -58,10 +60,6 @@ var Push = function () {
       var registrationTokens = (typeof tokens === 'undefined' ? 'undefined' : _typeof(tokens)) === 'object' ? tokens : [tokens];
       var sender = new _nodeGcm.Sender(config.androidSenderAPIKey);
 
-      console.log(config.bundle);
-      console.log(body.title);
-      console.log(body.message);
-      console.log(registrationTokens);
       var notification = new _nodeGcm.Message({
         restrictedPackageName: config.bundle,
         notification: {
