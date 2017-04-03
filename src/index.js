@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import program from 'commander';
-import Push from './Push';
+import Push from './push';
+import { getConfig, setConfig, hasConfig } from './utils/config.js';
 
 program
   .version('1.0.0');
@@ -16,17 +17,18 @@ program
   .option('--iosEnv [env]', 'iOS Env (Sandbox | Production)')
   .option('--bundle [bundleId]', 'Bundle ID')
   .action(options => {
-    fs.writeFile('./config.json', JSON.stringify({
-      androidSenderAPIKey: options.androidSenderAPIKey || '',
-      iosCert: options.iosCert || '',
-      iosTeamId: options.iosTeamId || '',
-      iosKeyId: options.iosKeyId || '',
-      iosEnv: options.iosEnv || '',
-      bundle: options.bundle || ''
-    }), err => {
-      if (err) throw err;
-      console.log('Config saved successfully!');
-    });
+    let {
+      androidSenderAPIKey,
+      iosCert,
+      iosTeamId,
+      iosKeyId,
+      iosEnv,
+      bundle
+    } = options;
+
+    setConfig({ androidSenderAPIKey, iosCert, iosTeamId, iosKeyId, iosEnv, bundle })
+      .then(() => console.log('Config saved successfully!'))
+      .catch(console.error.bind(console));
   });
 
   program
@@ -35,28 +37,24 @@ program
     .option('-m, --message [message]', 'Push Notification Message')
     .option('-d, --devices [devices]', 'String or array of PN tokens for devices')
     .action((os, options) => {
-      if (!['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
-      let config = {};
-      if (fs.existsSync('./config.json')) {
-        config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-      } else {
-        throw new Error('You must run "pushtester setup" first');
-      }
+      if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
+      if(!hasConfig()) throw new Error('You must run "pushtester setup" first')
 
-      if (!options.title || !options.message || !options.devices) {
-        throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
-      }
-      if (os.toLowerCase() === 'ios') {
-        Push.ios(config, {
-          title: options.title,
-          message: options.message
-        }, options.devices);
-      } else if (os.toLowerCase() === 'android') {
-        Push.android(config, {
-          title: options.title,
-          message: options.message
-        }, options.devices);
-      }
+      getConfig()
+        .then(config => {
+          if (!options.title || !options.message || !options.devices) {
+            throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
+          }
+
+          let data = {
+            title: options.title,
+            message: options.message
+          };
+
+          return Push[os].call(Push, config, data, options.devices)
+        })
+        .then(res => console.log('Push sent successfully!'))
+        .catch(console.error.bind(console))
     });
 
 program.parse(process.argv);
