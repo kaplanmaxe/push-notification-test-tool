@@ -36,7 +36,8 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.3",
     "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2"
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.1"
   },
   "dependencies": {
     "apn": "^2.1.4",
