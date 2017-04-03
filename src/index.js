@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-import fs from 'fs';
 import program from 'commander';
 import Push from './push';
-import { getConfig, setConfig, hasConfig } from './utils/config.js';
+import { getConfig, setConfig, hasConfig } from './utils/config';
 
 program
   .version('1.0.0');
@@ -17,7 +16,7 @@ program
   .option('--iosEnv [env]', 'iOS Env (Sandbox | Production)')
   .option('--bundle [bundleId]', 'Bundle ID')
   .action(options => {
-    let {
+    const {
       androidSenderAPIKey,
       iosCert,
       iosTeamId,
@@ -27,7 +26,9 @@ program
     } = options;
 
     setConfig({ androidSenderAPIKey, iosCert, iosTeamId, iosKeyId, iosEnv, bundle })
-      .then(() => console.log('Config saved successfully!'))
+      .then(() => {
+        console.log('Config saved successfully!');
+      })
       .catch(console.error.bind(console));
   });
 
@@ -38,7 +39,7 @@ program
     .option('-d, --devices [devices]', 'String or array of PN tokens for devices')
     .action((os, options) => {
       if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
-      if(!hasConfig()) throw new Error('You must run "pushtester setup" first')
+      if (!hasConfig()) throw new Error('You must run "pushtester setup" first');
 
       getConfig()
         .then(config => {
@@ -46,15 +47,17 @@ program
             throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
           }
 
-          let data = {
+          const data = {
             title: options.title,
             message: options.message
           };
 
-          return Push[os].call(Push, config, data, options.devices)
+          return Push[os].call(Push, config, data, options.devices);
         })
-        .then(res => console.log('Push sent successfully!'))
-        .catch(console.error.bind(console))
+        .then(() => {
+          console.log('Push sent successfully!');
+        })
+        .catch(console.error.bind(console));
     });
 
 program.parse(process.argv);

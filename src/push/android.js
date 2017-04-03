@@ -7,7 +7,7 @@ export default function(config, body, tokens) {
   return new Promise((resolve, reject) => {
     sender.send(notification, { registrationTokens }, err => {
       if (err) reject(err);
-      else resolve()
+      else resolve();
     });
   });
 }
