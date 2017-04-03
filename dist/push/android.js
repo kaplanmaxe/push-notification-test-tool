@@ -21,7 +21,6 @@ var _nodeGcm = require('node-gcm');
 
 function genMessage(title, body, payload, restrictedPackageName) {
   return new _nodeGcm.Message({
-    notification: { title: title, body: body },
-    restrictedPackageName: restrictedPackageName
+    notification: { title: title, body: body }, data: payload, restrictedPackageName: restrictedPackageName
   });
 }
