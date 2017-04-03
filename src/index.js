@@ -32,32 +32,34 @@ program
       .catch(console.error.bind(console));
   });
 
-  program
-    .command('send [os]')
-    .option('-t, --title [title]', 'Title of Push Notification')
-    .option('-m, --message [message]', 'Push Notification Message')
-    .option('-d, --devices [devices]', 'String or array of PN tokens for devices')
-    .action((os, options) => {
-      if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
-      if (!hasConfig()) throw new Error('You must run "pushtester setup" first');
+program
+  .command('send [os]')
+  .option('-t, --title [title]', 'Title of Push Notification')
+  .option('-m, --message [message]', 'Push Notification Message')
+  .option('-d, --devices [devices]', 'String or array of PN tokens for devices')
+  .option('-p --payload [payload]', 'String version of the json payload')
+  .option('-pf --payload-file [payloadFile]', 'Path for the json payload file')
+  .action((os, options) => {
+    if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
+    if (!hasConfig()) throw new Error('You must run "pushtester setup" first');
 
-      getConfig()
-        .then(config => {
-          if (!options.title || !options.message || !options.devices) {
-            throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
-          }
+    getConfig()
+      .then(config => {
+        if (!options.title || !options.message || !options.devices) {
+          throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
+        }
 
-          const data = {
-            title: options.title,
-            message: options.message
-          };
+        const data = {
+          title: options.title,
+          message: options.message
+        };
 
-          return Push[os].call(Push, config, data, options.devices);
-        })
-        .then(() => {
-          console.log('Push sent successfully!');
-        })
-        .catch(console.error.bind(console));
-    });
+        return Push[os].call(Push, config, data, options.devices);
+      })
+      .then(() => {
+        console.log('Push sent successfully!');
+      })
+      .catch(console.error.bind(console));
+  });
 
 program.parse(process.argv);
