@@ -21,5 +21,21 @@ pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
 ```
 
 ```
-pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
+pushtester send android -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
+```
+## Sending a Push with Payload
+
+Payload can be defined through 2 possible parameters
+
+1. `-p '{"postId":1}'`
+1. `-f payload.json`
+
+Examples
+
+```
+pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN -p '{"postId":1}'
+```
+
+```
+pushtester send android -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN -f payload.json
 ```
