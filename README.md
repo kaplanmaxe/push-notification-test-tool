@@ -21,5 +21,5 @@ pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
 ```
 
 ```
-pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
+pushtester send android -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
 ```

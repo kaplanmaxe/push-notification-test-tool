@@ -1,6 +1,6 @@
 {
   "name": "push-notification-test-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool to send push notifications for Android/iOS",
   "main": "dist/index.js",
   "scripts": {
