@@ -2,24 +2,41 @@ import fs from 'fs';
 
 const ConfigName = './.push-config.json';
 
-export function hasConfig() {
-  return fs.existsSync(ConfigName);
-}
+export default class Config {
+  /**
+   * Checks if config file exists
+   *
+   * @param {boolean}
+   */
+  static hasConfig() {
+    return fs.existsSync(ConfigName);
+  }
 
-export function getConfig() {
-  return new Promise((resolve, reject) => {
-    fs.readFile(ConfigName, 'utf8', (err, data) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(data));
+  /**
+   * Get config file
+   *
+   * @return {Promise}
+   */
+  static getConfig() {
+    return new Promise((resolve, reject) => {
+      fs.readFile(ConfigName, 'utf8', (err, data) => {
+        if (err) reject(err);
+        else resolve(JSON.parse(data));
+      });
     });
-  });
-}
+  }
 
-export function setConfig(configData) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(ConfigName, JSON.stringify(configData), err => {
-      if (err) reject(err);
-      else resolve();
+  /**
+   * Sets config file
+   *
+   * @param {object} configData Config to set
+   */
+  static setConfig(configData) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(ConfigName, JSON.stringify(configData), err => {
+        if (err) reject(err);
+        else resolve();
+      });
     });
-  });
+  }
 }

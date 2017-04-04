@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import program from 'commander';
-import Push from './push';
-import { getConfig, setConfig, hasConfig } from './utils/config';
-import parsePayload from './utils/payload';
+import Android from './push/Android';
+import Ios from './push/Ios';
+import Config from './utils/Config';
+import Payload from './utils/Payload';
 
 program
   .version('1.0.0');
@@ -26,7 +27,7 @@ program
       bundle
     } = options;
 
-    setConfig({ androidSenderAPIKey, iosCert, iosTeamId, iosKeyId, iosEnv, bundle })
+    Config.setConfig({ androidSenderAPIKey, iosCert, iosTeamId, iosKeyId, iosEnv, bundle })
       .then(() => {
         console.log('Config saved successfully!');
       })
@@ -42,23 +43,30 @@ program
   .option('-f --payload-file [payloadFile]', 'Path for the json payload file')
   .action((os, options) => {
     if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(`${os} is not supported.`);
-    if (!hasConfig()) throw new Error('You must run "pushtester setup" first');
+    if (!Config.hasConfig()) throw new Error('You must run "pushtester setup" first');
 
-    Promise.all([parsePayload(options.payload, options.payloadFile), getConfig()])
-      .then(res => {
-        const payload = res[0];
-        const config = res[1];
-        const { title, message, devices } = options;
-        if (!title || !message || !devices) {
-          throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
-        }
-        const data = { title, message, payload };
-        return Push[os].call(Push, config, data, options.devices);
-      })
-      .then(() => {
-        console.log('Push sent successfully!');
-      })
-      .catch(console.error.bind(console));
+    Promise.all([
+      Payload.parsePayload(options.payload, options.payloadFile),
+      Config.getConfig()
+    ])
+    .then(res => {
+      const payload = res[0];
+      const config = res[1];
+      const { title, message, devices } = options;
+      if (!title || !message || !devices) {
+        throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
+      }
+      const data = { title, message, payload };
+      if (os.toLowerCase() === 'ios') {
+        return Ios.send(config, data, options.devices);
+      } else if (os.toLowerCase() === 'android') {
+        return Android.send(config, data, options.devices);
+      }
+    })
+    .then(() => {
+      console.log('Push sent successfully!');
+    })
+    .catch(console.error.bind(console));
   });
 
 program.parse(process.argv);

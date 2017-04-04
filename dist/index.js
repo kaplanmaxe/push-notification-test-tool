@@ -5,15 +5,21 @@ var _commander = require('commander');
 
 var _commander2 = _interopRequireDefault(_commander);
 
-var _push = require('./push');
+var _Android = require('./push/Android');
 
-var _push2 = _interopRequireDefault(_push);
+var _Android2 = _interopRequireDefault(_Android);
 
-var _config = require('./utils/config');
+var _Ios = require('./push/Ios');
 
-var _payload = require('./utils/payload');
+var _Ios2 = _interopRequireDefault(_Ios);
 
-var _payload2 = _interopRequireDefault(_payload);
+var _Config = require('./utils/Config');
+
+var _Config2 = _interopRequireDefault(_Config);
+
+var _Payload = require('./utils/Payload');
+
+var _Payload2 = _interopRequireDefault(_Payload);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28,16 +34,16 @@ _commander2.default.command('setup').description('set up enviromentals to send p
       bundle = options.bundle;
 
 
-  (0, _config.setConfig)({ androidSenderAPIKey: androidSenderAPIKey, iosCert: iosCert, iosTeamId: iosTeamId, iosKeyId: iosKeyId, iosEnv: iosEnv, bundle: bundle }).then(function () {
+  _Config2.default.setConfig({ androidSenderAPIKey: androidSenderAPIKey, iosCert: iosCert, iosTeamId: iosTeamId, iosKeyId: iosKeyId, iosEnv: iosEnv, bundle: bundle }).then(function () {
     console.log('Config saved successfully!');
   }).catch(console.error.bind(console));
 });
 
 _commander2.default.command('send [os]').option('-t, --title [title]', 'Title of Push Notification').option('-m, --message [message]', 'Push Notification Message').option('-d, --devices [devices]', 'String or array of PN tokens for devices').option('-p --payload [payload]', 'String version of the json payload').option('-f --payload-file [payloadFile]', 'Path for the json payload file').action(function (os, options) {
   if (!os || !['android', 'ios'].includes(os.toLowerCase())) throw new Error(os + ' is not supported.');
-  if (!(0, _config.hasConfig)()) throw new Error('You must run "pushtester setup" first');
+  if (!_Config2.default.hasConfig()) throw new Error('You must run "pushtester setup" first');
 
-  Promise.all([(0, _payload2.default)(options.payload, options.payloadFile), (0, _config.getConfig)()]).then(function (res) {
+  Promise.all([_Payload2.default.parsePayload(options.payload, options.payloadFile), _Config2.default.getConfig()]).then(function (res) {
     var payload = res[0];
     var config = res[1];
     var title = options.title,
@@ -48,7 +54,11 @@ _commander2.default.command('send [os]').option('-t, --title [title]', 'Title of
       throw new Error('You must specify a title, message, and device tokens. Run pushtester send --help for more information.');
     }
     var data = { title: title, message: message, payload: payload };
-    return _push2.default[os].call(_push2.default, config, data, options.devices);
+    if (os.toLowerCase() === 'ios') {
+      return _Ios2.default.send(config, data, options.devices);
+    } else if (os.toLowerCase() === 'android') {
+      return _Android2.default.send(config, data, options.devices);
+    }
   }).then(function () {
     console.log('Push sent successfully!');
   }).catch(console.error.bind(console));
