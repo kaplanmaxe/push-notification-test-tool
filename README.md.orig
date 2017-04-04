@@ -22,6 +22,8 @@ pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
 
 ```
 pushtester send android -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN
+<<<<<<< f20eb3728b9eb29b7d033d2ce83a50289eaf1db7
+=======
 ```
 ## Sending a Push with Payload
 
@@ -38,4 +40,5 @@ pushtester send ios -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN -p '{"postId":
 
 ```
 pushtester send android -t TITLE -m MESSAGE tool -d YOUR_DEVICE_TOKEN -f payload.json
+>>>>>>> Add Payload Option
 ```

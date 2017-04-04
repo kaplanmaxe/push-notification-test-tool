@@ -14,7 +14,6 @@ export default function(config, body, tokens) {
 
 function genMessage(title, body, payload, restrictedPackageName) {
   return new Message({
-    notification: { title, body },
-    restrictedPackageName
+    notification: { title, body }, data: payload, restrictedPackageName
   });
 }
