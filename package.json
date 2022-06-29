@@ -41,6 +41,6 @@
   "dependencies": {
     "apn": "^2.1.4",
     "commander": "^2.9.0",
-    "node-gcm": "^0.14.5"
+    "node-gcm": "^1.0.2"
   }
 }
